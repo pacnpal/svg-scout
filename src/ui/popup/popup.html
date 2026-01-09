@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Scout</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <header class="header">
+      <h1>SVG Scout</h1>
+      <button class="btn btn-icon theme-toggle" id="themeToggle" title="Toggle theme">
+        <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="5"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+        </svg>
+        <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+        <svg class="theme-icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+          <line x1="8" y1="21" x2="16" y2="21"/>
+          <line x1="12" y1="17" x2="12" y2="21"/>
+        </svg>
+      </button>
+    </header>
+
+    <main class="main">
+      <div class="status" id="status">
+        <span class="status-text">Ready to scan</span>
+      </div>
+
+      <div class="results" id="results" style="display: none;">
+        <div class="results-header">
+          <span class="results-count" id="resultsCount">0 SVGs found</span>
+          <label class="select-all-label">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>All</span>
+          </label>
+        </div>
+        <div class="results-grid" id="resultsGrid"></div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="scanBtn">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          Scan Page
+        </button>
+
+        <button class="btn btn-secondary" id="sidePanelBtn" style="display: none;">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <path d="M9 3v18"/>
+          </svg>
+          Open Side Panel
+        </button>
+
+        <div class="format-row" id="formatRow" style="display: none;">
+          <label class="format-label">Format:</label>
+          <select class="format-select" id="formatSelect">
+            <option value="svg">SVG</option>
+            <option value="png-1x" selected>PNG (1x)</option>
+            <option value="png-2x">PNG (2x)</option>
+            <option value="png-4x">PNG (4x)</option>
+          </select>
+        </div>
+
+        <div class="download-actions" id="downloadActions" style="display: none;">
+          <button class="btn btn-primary" id="downloadSelectedBtn" disabled>
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7 10 12 15 17 10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span id="downloadSelectedText">Download Selected</span>
+          </button>
+          <button class="btn btn-secondary" id="downloadAllBtn">
+            Download All
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <span class="footer-text">Click scan to find SVGs on this page</span>
+    </footer>
+  </div>
+
+  <script type="module" src="popup.ts"></script>
+</body>
+</html>

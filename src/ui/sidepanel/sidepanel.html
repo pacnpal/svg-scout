@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SVG Scout</title>
+  <link rel="stylesheet" href="sidepanel.css">
+</head>
+<body>
+  <div class="sidepanel">
+    <header class="header">
+      <h1>SVG Scout</h1>
+      <div class="header-actions">
+        <button class="btn btn-icon theme-toggle" id="themeToggle" title="Toggle theme">
+          <svg class="theme-icon-light" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+          <svg class="theme-icon-dark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+          <svg class="theme-icon-system" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+            <line x1="8" y1="21" x2="16" y2="21"/>
+            <line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </button>
+        <button class="btn btn-icon" id="scanBtn" title="Scan Page">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <select class="select" id="filterSelect">
+          <option value="all">All Sources</option>
+          <option value="inline">Inline</option>
+          <option value="img">Images</option>
+          <option value="css-background">CSS Backgrounds</option>
+          <option value="sprite">Sprites</option>
+          <option value="shadow-dom">Shadow DOM</option>
+          <option value="favicon">Favicons</option>
+          <option value="object-embed">Object/Embed</option>
+        </select>
+        <select class="select" id="sortSelect">
+          <option value="source">Sort by Source</option>
+          <option value="size-asc">Size (Small first)</option>
+          <option value="size-desc">Size (Large first)</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
+      <div class="toolbar-right">
+        <button class="btn btn-icon" id="gridViewBtn" title="Grid View">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <rect x="3" y="3" width="7" height="7" rx="1"/>
+            <rect x="14" y="3" width="7" height="7" rx="1"/>
+            <rect x="3" y="14" width="7" height="7" rx="1"/>
+            <rect x="14" y="14" width="7" height="7" rx="1"/>
+          </svg>
+        </button>
+        <button class="btn btn-icon" id="listViewBtn" title="List View">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <circle cx="4" cy="6" r="1" fill="currentColor"/>
+            <circle cx="4" cy="12" r="1" fill="currentColor"/>
+            <circle cx="4" cy="18" r="1" fill="currentColor"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="status-bar" id="statusBar">
+      <span class="status-text" id="statusText">Ready to scan</span>
+    </div>
+
+    <main class="main" id="main">
+      <div class="empty-state" id="emptyState">
+        <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <path d="M12 18v-6"/>
+          <path d="M9 15l3 3 3-3"/>
+        </svg>
+        <p>Click the scan button to find SVGs</p>
+      </div>
+
+      <div class="svg-grid" id="svgGrid" style="display: none;"></div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-row">
+        <div class="footer-left">
+          <label class="checkbox-label">
+            <input type="checkbox" id="selectAllCheckbox">
+            <span>Select All</span>
+          </label>
+          <span class="selected-count" id="selectedCount"></span>
+        </div>
+        <div class="footer-format">
+          <label class="format-label">Format:</label>
+          <select class="format-select" id="formatSelect">
+            <option value="svg">SVG</option>
+            <option value="png-1x" selected>PNG (1x)</option>
+            <option value="png-2x">PNG (2x)</option>
+            <option value="png-4x">PNG (4x)</option>
+          </select>
+        </div>
+      </div>
+      <div class="footer-actions">
+        <button class="btn btn-secondary" id="downloadSelectedBtn" disabled>
+          Download Selected
+        </button>
+        <button class="btn btn-primary" id="downloadAllBtn" disabled>
+          Download All
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="sidepanel.ts"></script>
+</body>
+</html>

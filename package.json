@@ -1,0 +1,22 @@
+{
+  "name": "svg-scout",
+  "version": "1.0.0",
+  "description": "Chrome extension to scout and extract SVG icons from any webpage",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "generate-icons": "node scripts/generate-icons.js"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^2.0.0-beta.28",
+    "@types/chrome": "^0.0.287",
+    "sharp": "^0.33.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7"
+  },
+  "dependencies": {
+    "jszip": "^3.10.1"
+  }
+}
