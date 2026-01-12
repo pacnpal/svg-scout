@@ -11,7 +11,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "svg-scout@example.com",
+      "id": "{c3b3c363-6199-4093-bfb2-ec0cb5ba864a}",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": ["none"]
