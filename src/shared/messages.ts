@@ -40,6 +40,7 @@ export interface DownloadPngMessage {
   scale: PngScale;
   backgroundColor?: string;
   pageTitle?: string;
+  returnDataUrl?: boolean;
 }
 
 export interface DownloadZipMessage {
@@ -48,6 +49,7 @@ export interface DownloadZipMessage {
   includePng?: boolean;
   pngScale?: PngScale;
   pageTitle?: string;
+  returnDataUrl?: boolean;
 }
 
 export interface CopySvgMessage {
@@ -88,6 +90,8 @@ export interface MessageResponse<T = unknown> {
   data?: T;
   error?: string;
   pageTitle?: string;
+  dataUrl?: string;
+  filename?: string;
 }
 
 export function sendMessage<T = unknown>(message: Message): Promise<MessageResponse<T>> {

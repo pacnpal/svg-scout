@@ -1,4 +1,4 @@
-import { browser, isChrome, isFirefox } from '../shared/browser-api';
+import { browser, isChrome, isSafari } from '../shared/browser-api';
 import type { SVGItem, PngScale } from '../shared/types';
 import { OFFSCREEN_DOCUMENT_PATH } from '../shared/constants';
 import { generateFileName } from '../shared/svg-utils';
@@ -9,13 +9,13 @@ interface MessageResponse {
   error?: string;
 }
 
-// Only import for Firefox - Chrome uses offscreen document
+// Only import for non-Chrome browsers (Firefox/Safari) - Chrome uses offscreen document
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let JSZipModule: any = null;
 let svgToPngModule: typeof import('../shared/svg-to-png') | null = null;
 
-async function loadFirefoxModules() {
-  if (isFirefox && !JSZipModule) {
+async function loadNonChromeModules() {
+  if (!isChrome && !JSZipModule) {
     JSZipModule = await import('jszip');
     svgToPngModule = await import('../shared/svg-to-png');
   }
@@ -52,9 +52,10 @@ async function ensureOffscreenDocument(): Promise<void> {
 }
 
 /**
- * Creates a blob URL from content
- * Chrome: uses offscreen document
- * Firefox: direct creation (background has DOM access)
+ * Creates a downloadable URL from content
+ * Chrome: uses offscreen document with blob URLs
+ * Firefox: direct blob URL creation (background has DOM access)
+ * Safari: uses data URLs (blob URLs don't work reliably in Safari service workers)
  */
 export async function createBlobUrl(content: string, mimeType: string): Promise<string> {
   if (isChrome) {
@@ -69,6 +70,10 @@ export async function createBlobUrl(content: string, mimeType: string): Promise<
       throw new Error(response.error || 'Failed to create blob URL');
     }
     return response.data;
+  } else if (isSafari) {
+    // Safari: use data URL (blob URLs don't work reliably in service workers)
+    const base64 = btoa(unescape(encodeURIComponent(content)));
+    return `data:${mimeType};base64,${base64}`;
   } else {
     // Firefox: direct blob creation
     const blob = new Blob([content], { type: mimeType });
@@ -77,9 +82,10 @@ export async function createBlobUrl(content: string, mimeType: string): Promise<
 }
 
 /**
- * Converts SVG to PNG and returns a blob URL
+ * Converts SVG to PNG and returns a downloadable URL
  * Chrome: uses offscreen document
- * Firefox: direct conversion (background has DOM access via Canvas)
+ * Firefox: direct blob URL (background has DOM access via Canvas)
+ * Safari: uses data URL
  */
 export async function convertToPng(
   content: string,
@@ -100,12 +106,19 @@ export async function convertToPng(
     }
     return response.data;
   } else {
-    // Firefox: direct conversion using Canvas API
-    await loadFirefoxModules();
+    // Firefox/Safari: direct conversion using Canvas API
+    await loadNonChromeModules();
     if (!svgToPngModule) {
       throw new Error('Failed to load PNG conversion module');
     }
     const blob = await svgToPngModule.svgToPng(content, { scale, backgroundColor });
+
+    if (isSafari) {
+      // Safari: convert blob to data URL
+      const arrayBuffer = await blob.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      return `data:image/png;base64,${base64}`;
+    }
     return URL.createObjectURL(blob);
   }
 }
@@ -113,7 +126,8 @@ export async function convertToPng(
 /**
  * Creates a ZIP file with SVG (and optionally PNG) files
  * Chrome: uses offscreen document
- * Firefox: direct ZIP creation
+ * Firefox: direct blob URL creation
+ * Safari: uses data URL
  */
 export async function createZip(
   items: SVGItem[],
@@ -134,8 +148,8 @@ export async function createZip(
     }
     return response.data;
   } else {
-    // Firefox: direct ZIP creation
-    await loadFirefoxModules();
+    // Firefox/Safari: direct ZIP creation
+    await loadNonChromeModules();
     if (!JSZipModule || !svgToPngModule) {
       throw new Error('Failed to load ZIP/PNG modules');
     }
@@ -164,6 +178,12 @@ export async function createZip(
           // Skip failed PNG conversions
         }
       }
+    }
+
+    if (isSafari) {
+      // Safari: generate as base64 data URL
+      const base64 = await zip.generateAsync({ type: 'base64' });
+      return `data:application/zip;base64,${base64}`;
     }
 
     const zipBlob = await zip.generateAsync({ type: 'blob' });

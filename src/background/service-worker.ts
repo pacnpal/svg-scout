@@ -41,10 +41,10 @@ async function handleMessage(
       return downloadSvg(message.item, message.pageTitle);
 
     case 'DOWNLOAD_PNG':
-      return downloadPng(message.item, message.scale, message.backgroundColor, message.pageTitle);
+      return downloadPng(message.item, message.scale, message.backgroundColor, message.pageTitle, message.returnDataUrl);
 
     case 'DOWNLOAD_ZIP':
-      return downloadZip(message.items, message.includePng, message.pngScale, message.pageTitle);
+      return downloadZip(message.items, message.includePng, message.pngScale, message.pageTitle, message.returnDataUrl);
 
     case 'FETCH_EXTERNAL_SVG':
       return fetchExternalSvg(message.url);
@@ -80,15 +80,22 @@ async function downloadPng(
   item: SVGItem,
   scale: PngScale,
   backgroundColor?: string,
-  pageTitle?: string
+  pageTitle?: string,
+  returnDataUrl?: boolean
 ): Promise<MessageResponse> {
   try {
-    const blobUrl = await convertToPng(item.content, scale, backgroundColor);
+    const dataUrl = await convertToPng(item.content, scale, backgroundColor);
     const baseName = generateFileName(item, 0, pageTitle).replace('.svg', '');
     const fileName = `${baseName}-${scale}x.png`;
 
+    // Safari: return data URL for popup to handle download
+    if (returnDataUrl) {
+      return { success: true, dataUrl, filename: fileName };
+    }
+
+    // Chrome/Firefox: use downloads API
     await browser.downloads.download({
-      url: blobUrl,
+      url: dataUrl,
       filename: fileName,
     });
 
@@ -102,14 +109,21 @@ async function downloadZip(
   items: SVGItem[],
   includePng?: boolean,
   pngScale?: PngScale,
-  pageTitle?: string
+  pageTitle?: string,
+  returnDataUrl?: boolean
 ): Promise<MessageResponse> {
   try {
-    const blobUrl = await createZip(items, includePng, pngScale);
+    const dataUrl = await createZip(items, includePng, pngScale);
     const zipName = pageTitle ? `${sanitizeFileName(pageTitle)}-svgs.zip` : 'svg-export.zip';
 
+    // Safari: return data URL for popup to handle download
+    if (returnDataUrl) {
+      return { success: true, dataUrl, filename: zipName };
+    }
+
+    // Chrome/Firefox: use downloads API
     await browser.downloads.download({
-      url: blobUrl,
+      url: dataUrl,
       filename: zipName,
     });
 

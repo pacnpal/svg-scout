@@ -1,22 +1,31 @@
 import browser from 'webextension-polyfill';
 
 // Declare the build-time constant
-declare const __BROWSER__: 'chrome' | 'firefox';
+declare const __BROWSER__: 'chrome' | 'firefox' | 'safari';
 
 // Browser detection - prefer build-time constant, fallback to runtime detection
 export const isFirefox = typeof __BROWSER__ !== 'undefined'
   ? __BROWSER__ === 'firefox'
   : typeof browser.runtime.getBrowserInfo === 'function';
 
-export const isChrome = !isFirefox;
+export const isSafari = typeof __BROWSER__ !== 'undefined'
+  ? __BROWSER__ === 'safari'
+  : !isFirefox && typeof (globalThis as unknown as { safari?: unknown }).safari !== 'undefined';
+
+export const isChrome = !isFirefox && !isSafari;
 
 // Re-export the browser API for convenience
 export { browser };
 
 /**
  * Opens the side panel (Chrome) or sidebar (Firefox)
+ * Safari: no-op (no side panel support)
  */
 export async function openSidePanel(windowId?: number): Promise<void> {
+  if (isSafari) {
+    // Safari doesn't support side panel - no-op
+    return;
+  }
   if (isChrome && chrome.sidePanel) {
     let targetWindowId = windowId;
     if (!targetWindowId) {

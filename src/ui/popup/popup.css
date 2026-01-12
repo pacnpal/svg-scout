@@ -407,21 +407,30 @@ body {
   display: block;
 }
 
-/* Light theme: show sun, hide others */
-[data-theme="light"] .theme-toggle .theme-icon-light {
+/* Light preference: show sun, hide others */
+[data-theme-preference="light"] .theme-toggle .theme-icon-light {
   display: block;
 }
-[data-theme="light"] .theme-toggle .theme-icon-system,
-[data-theme="light"] .theme-toggle .theme-icon-dark {
+[data-theme-preference="light"] .theme-toggle .theme-icon-system,
+[data-theme-preference="light"] .theme-toggle .theme-icon-dark {
   display: none;
 }
 
-/* Dark theme: show moon, hide others */
-[data-theme="dark"] .theme-toggle .theme-icon-dark {
+/* Dark preference: show moon, hide others */
+[data-theme-preference="dark"] .theme-toggle .theme-icon-dark {
   display: block;
 }
-[data-theme="dark"] .theme-toggle .theme-icon-system,
-[data-theme="dark"] .theme-toggle .theme-icon-light {
+[data-theme-preference="dark"] .theme-toggle .theme-icon-system,
+[data-theme-preference="dark"] .theme-toggle .theme-icon-light {
+  display: none;
+}
+
+/* System preference: show system icon, hide others */
+[data-theme-preference="system"] .theme-toggle .theme-icon-system {
+  display: block;
+}
+[data-theme-preference="system"] .theme-toggle .theme-icon-light,
+[data-theme-preference="system"] .theme-toggle .theme-icon-dark {
   display: none;
 }
 

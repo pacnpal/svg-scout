@@ -1,0 +1,460 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		1E45391E51E709131BC66C5E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8A938D94DB16C25943EC3587 /* Assets.xcassets */; };
+		3A099875F3B988726586801A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 535681E286BC1B32B950B4A4 /* AppDelegate.swift */; };
+		716E975E3D969902C05B80CE /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8AB170E540457D1A9AD10B /* ViewController.swift */; };
+		A03E89310C066525E1C9313F /* Resources in Resources */ = {isa = PBXBuildFile; fileRef = BF8FC337B530AADAA4678EC3 /* Resources */; };
+		DE76AC69F26A7640462C9CE9 /* SVG Scout Extension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = DB6E5065CAD96F2F15A7370D /* SVG Scout Extension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EED85A4FFA0C5A047538DA68 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A0BBAA57BE80A9D0D08579C /* Main.storyboard */; };
+		FF8FA7324BC60260E38C8778 /* SafariWebExtensionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62AB011A0B00231CC16D8969 /* SafariWebExtensionHandler.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		61FBF6B70046F0300D29393C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 82795498DAE49E75C871B7B0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7C3CE1120EFB0273D8009FDE;
+			remoteInfo = "SVG Scout Extension";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A812D34BE1BF3DDA831E5C12 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				DE76AC69F26A7640462C9CE9 /* SVG Scout Extension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0793D7B05B7B3BFCDC17978C /* SVG Scout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "SVG Scout.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1A0BBAA57BE80A9D0D08579C /* Main.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		25792B0D23976C2A5D4B5AB5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		535681E286BC1B32B950B4A4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		62AB011A0B00231CC16D8969 /* SafariWebExtensionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SafariWebExtensionHandler.swift; sourceTree = "<group>"; };
+		7A8AB170E540457D1A9AD10B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		8A938D94DB16C25943EC3587 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B3F9C6688737B883ED91B57F /* SVG Scout.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SVG Scout.entitlements"; sourceTree = "<group>"; };
+		BF8FC337B530AADAA4678EC3 /* Resources */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Resources; path = "SVG Scout Extension/Resources"; sourceTree = SOURCE_ROOT; };
+		CD960D57AFF823DC15265E3C /* SVG Scout Extension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "SVG Scout Extension.entitlements"; sourceTree = "<group>"; };
+		DB6E5065CAD96F2F15A7370D /* SVG Scout Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "SVG Scout Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F60D503D4D54A1BA8B305886 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1FEDA196BD16369C440B1542 /* SVG Scout Extension */ = {
+			isa = PBXGroup;
+			children = (
+				F60D503D4D54A1BA8B305886 /* Info.plist */,
+				62AB011A0B00231CC16D8969 /* SafariWebExtensionHandler.swift */,
+				CD960D57AFF823DC15265E3C /* SVG Scout Extension.entitlements */,
+			);
+			path = "SVG Scout Extension";
+			sourceTree = "<group>";
+		};
+		57341DE8481A6B9F41C4B237 = {
+			isa = PBXGroup;
+			children = (
+				F1428CDE2CECCD50B4E3C459 /* SVG Scout */,
+				1FEDA196BD16369C440B1542 /* SVG Scout Extension */,
+				BF8FC337B530AADAA4678EC3 /* Resources */,
+				FFE8344CC07835BA2E34ECEE /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F1428CDE2CECCD50B4E3C459 /* SVG Scout */ = {
+			isa = PBXGroup;
+			children = (
+				535681E286BC1B32B950B4A4 /* AppDelegate.swift */,
+				8A938D94DB16C25943EC3587 /* Assets.xcassets */,
+				25792B0D23976C2A5D4B5AB5 /* Info.plist */,
+				1A0BBAA57BE80A9D0D08579C /* Main.storyboard */,
+				B3F9C6688737B883ED91B57F /* SVG Scout.entitlements */,
+				7A8AB170E540457D1A9AD10B /* ViewController.swift */,
+			);
+			path = "SVG Scout";
+			sourceTree = "<group>";
+		};
+		FFE8344CC07835BA2E34ECEE /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DB6E5065CAD96F2F15A7370D /* SVG Scout Extension.appex */,
+				0793D7B05B7B3BFCDC17978C /* SVG Scout.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3A44D395641DB92E1A79EA67 /* SVG Scout */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 571A234B6C5BF20D7D06F6EA /* Build configuration list for PBXNativeTarget "SVG Scout" */;
+			buildPhases = (
+				E521EE3500F58EE34AAE7F2D /* Sources */,
+				C3CDA3CA0C4DD33A6706E6AD /* Resources */,
+				A812D34BE1BF3DDA831E5C12 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				6961C03FA0A2515FF276F126 /* PBXTargetDependency */,
+			);
+			name = "SVG Scout";
+			packageProductDependencies = (
+			);
+			productName = "SVG Scout";
+			productReference = 0793D7B05B7B3BFCDC17978C /* SVG Scout.app */;
+			productType = "com.apple.product-type.application";
+		};
+		7C3CE1120EFB0273D8009FDE /* SVG Scout Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E8EDA51ED02ABFA7EA65DDDC /* Build configuration list for PBXNativeTarget "SVG Scout Extension" */;
+			buildPhases = (
+				9A8DDF24BCE8DBC5E6E41A10 /* Sources */,
+				A9820BB2BDB5F9F18B3E7A89 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "SVG Scout Extension";
+			packageProductDependencies = (
+			);
+			productName = "SVG Scout Extension";
+			productReference = DB6E5065CAD96F2F15A7370D /* SVG Scout Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		82795498DAE49E75C871B7B0 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					3A44D395641DB92E1A79EA67 = {
+						ProvisioningStyle = Automatic;
+					};
+					7C3CE1120EFB0273D8009FDE = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = BFC31E91905CAC18A584E7E5 /* Build configuration list for PBXProject "SVGScout" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 57341DE8481A6B9F41C4B237;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3A44D395641DB92E1A79EA67 /* SVG Scout */,
+				7C3CE1120EFB0273D8009FDE /* SVG Scout Extension */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		A9820BB2BDB5F9F18B3E7A89 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A03E89310C066525E1C9313F /* Resources in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C3CDA3CA0C4DD33A6706E6AD /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1E45391E51E709131BC66C5E /* Assets.xcassets in Resources */,
+				EED85A4FFA0C5A047538DA68 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		9A8DDF24BCE8DBC5E6E41A10 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF8FA7324BC60260E38C8778 /* SafariWebExtensionHandler.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E521EE3500F58EE34AAE7F2D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A099875F3B988726586801A /* AppDelegate.swift in Sources */,
+				716E975E3D969902C05B80CE /* ViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		6961C03FA0A2515FF276F126 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7C3CE1120EFB0273D8009FDE /* SVG Scout Extension */;
+			targetProxy = 61FBF6B70046F0300D29393C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		2DBF926627FFAA8D95826E5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SVG Scout Extension/SVG Scout Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SVG Scout Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.svgscout.app.extension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Debug;
+		};
+		3E958FABCD4A2E3744523138 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		602E27398A271AB9D60EB794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "SVG Scout Extension/SVG Scout Extension.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "SVG Scout Extension/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.svgscout.app.extension;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+			};
+			name = Release;
+		};
+		65DABC3A430E882E898E9380 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SVG Scout/SVG Scout.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SVG Scout/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.svgscout.app;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		B4EF710918FD2010F2890AFD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "SVG Scout/SVG Scout.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = "SVG Scout/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.svgscout.app;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		B6A5C2682B1B34CF85F9A422 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 1.0.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		571A234B6C5BF20D7D06F6EA /* Build configuration list for PBXNativeTarget "SVG Scout" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				65DABC3A430E882E898E9380 /* Debug */,
+				B4EF710918FD2010F2890AFD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		BFC31E91905CAC18A584E7E5 /* Build configuration list for PBXProject "SVGScout" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3E958FABCD4A2E3744523138 /* Debug */,
+				B6A5C2682B1B34CF85F9A422 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		E8EDA51ED02ABFA7EA65DDDC /* Build configuration list for PBXNativeTarget "SVG Scout Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2DBF926627FFAA8D95826E5E /* Debug */,
+				602E27398A271AB9D60EB794 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 82795498DAE49E75C871B7B0 /* Project object */;
+}

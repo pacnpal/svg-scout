@@ -1,4 +1,4 @@
-import { browser, isFirefox, openSidePanel } from '../../shared/browser-api';
+import { browser, isFirefox, isSafari, openSidePanel } from '../../shared/browser-api';
 import type { SVGItem, PngScale, ThemeMode } from '../../shared/types';
 import type { Message, ScanProgressMessage, ScanResultMessage } from '../../shared/messages';
 import { getSettings, saveSettings } from '../../shared/storage';
@@ -58,7 +58,17 @@ async function init(): Promise<void> {
 }
 
 function applyTheme(theme: ThemeMode): void {
-  document.documentElement.setAttribute('data-theme', theme);
+  // Set the user's preference (for icon display)
+  document.documentElement.setAttribute('data-theme-preference', theme);
+
+  if (theme === 'system') {
+    // Detect system preference and apply it explicitly
+    // This ensures Safari extension popup properly detects the theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
 }
 
 async function handleThemeToggle(): Promise<void> {
@@ -78,10 +88,11 @@ async function handleScan(): Promise<void> {
     const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (!tab.id) throw new Error('No active tab');
 
-    // Check if this is a restricted page (Chrome, Firefox, Edge)
+    // Check if this is a restricted page (Chrome, Firefox, Edge, Safari)
     if (tab.url?.startsWith('chrome://') || tab.url?.startsWith('chrome-extension://') ||
         tab.url?.startsWith('about:') || tab.url?.startsWith('edge://') ||
-        tab.url?.startsWith('moz-extension://')) {
+        tab.url?.startsWith('moz-extension://') ||
+        tab.url?.startsWith('safari-extension://') || tab.url?.startsWith('safari-web-extension://')) {
       throw new Error('Cannot scan browser pages');
     }
 
@@ -210,7 +221,8 @@ function displayResults(items: SVGItem[]): void {
 
   setStatus('complete', 'Scan complete');
   results.style.display = 'flex';
-  sidePanelBtn.style.display = 'flex';
+  // Hide side panel button on Safari (no side panel support)
+  sidePanelBtn.style.display = isSafari ? 'none' : 'flex';
   formatRow.style.display = 'flex';
   downloadActions.style.display = 'flex';
 
@@ -348,13 +360,19 @@ async function handleOpenSidePanel(): Promise<void> {
 }
 
 async function handleDownloadSelected(): Promise<void> {
+  console.log('handleDownloadSelected called, selected:', selectedIds.size);
   const items = currentItems.filter(item => selectedIds.has(item.id));
-  if (items.length === 0) return;
+  if (items.length === 0) {
+    console.log('No items selected');
+    return;
+  }
 
+  console.log('Downloading', items.length, 'items');
   downloadSelectedBtn.disabled = true;
 
   try {
     await downloadItems(items);
+    console.log('downloadItems completed');
   } catch (error) {
     console.error('Download error:', error);
   } finally {
@@ -376,9 +394,98 @@ async function handleDownloadAll(): Promise<void> {
   }
 }
 
+/**
+ * Safari-specific download - tries multiple approaches
+ */
+function downloadViaIframe(dataUrl: string, filename: string): Promise<void> {
+  return new Promise((resolve) => {
+    console.log('Safari download attempt:', filename, dataUrl.substring(0, 50));
+
+    // Approach 1: Direct anchor click
+    const a = document.createElement('a');
+    a.href = dataUrl;
+    a.download = filename;
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    console.log('Anchor click executed');
+
+    // Approach 2: Also try location assignment for SVGs
+    if (dataUrl.startsWith('data:image/svg+xml')) {
+      // For SVG, we can try to navigate to it
+      setTimeout(() => {
+        window.location.href = dataUrl;
+      }, 100);
+    }
+
+    resolve();
+  });
+}
+
+/**
+ * Generate filename for download
+ */
+function generateDownloadFilename(item: SVGItem, index: number, pageTitle?: string): string {
+  if (item.sourceUrl) {
+    const urlParts = item.sourceUrl.split('/');
+    const lastPart = urlParts[urlParts.length - 1].split('?')[0];
+    if (lastPart && lastPart.includes('.')) {
+      return lastPart.replace(/\.[^.]+$/, '.svg');
+    }
+  }
+  const prefix = pageTitle ? pageTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').substring(0, 20) : 'icon';
+  return `${prefix}-${index + 1}.svg`;
+}
+
 async function downloadItems(items: SVGItem[]): Promise<void> {
   const format = getSelectedFormat();
+  console.log('downloadItems called, isSafari:', isSafari, 'format:', format.type, 'items:', items.length);
 
+  // Safari: handle downloads directly in popup using anchor click
+  if (isSafari) {
+    console.log('Using Safari download path');
+    if (items.length === 1) {
+      const item = items[0];
+      const filename = generateDownloadFilename(item, 0, currentPageTitle);
+      console.log('Single item download:', filename);
+
+      if (format.type === 'svg') {
+        const dataUrl = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(item.content)));
+        console.log('SVG data URL created, length:', dataUrl.length);
+        downloadViaIframe(dataUrl, filename);
+      } else {
+        // For PNG, we still need the service worker to do the conversion
+        // but we'll get back a data URL to download
+        const response = await browser.runtime.sendMessage({
+          type: 'DOWNLOAD_PNG',
+          item,
+          scale: format.scale,
+          pageTitle: currentPageTitle,
+          returnDataUrl: true,
+        }) as { success: boolean; dataUrl?: string; filename?: string };
+        if (response.success && response.dataUrl && response.filename) {
+          downloadViaIframe(response.dataUrl, response.filename);
+        }
+      }
+    } else {
+      // For multiple files, need service worker for ZIP creation
+      const response = await browser.runtime.sendMessage({
+        type: 'DOWNLOAD_ZIP',
+        items,
+        includePng: format.type === 'png',
+        pngScale: format.type === 'png' ? format.scale : undefined,
+        pageTitle: currentPageTitle,
+        returnDataUrl: true,
+      }) as { success: boolean; dataUrl?: string; filename?: string };
+      if (response.success && response.dataUrl && response.filename) {
+        downloadViaIframe(response.dataUrl, response.filename);
+      }
+    }
+    return;
+  }
+
+  // Chrome/Firefox: use downloads API via service worker
   if (items.length === 1) {
     if (format.type === 'svg') {
       await browser.runtime.sendMessage({

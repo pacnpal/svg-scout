@@ -98,7 +98,17 @@ async function init(): Promise<void> {
 }
 
 function applyTheme(theme: ThemeMode): void {
-  document.documentElement.setAttribute('data-theme', theme);
+  // Set the user's preference (for icon display)
+  document.documentElement.setAttribute('data-theme-preference', theme);
+
+  if (theme === 'system') {
+    // Detect system preference and apply it explicitly
+    // This ensures Safari extension popup properly detects the theme
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  } else {
+    document.documentElement.setAttribute('data-theme', theme);
+  }
 }
 
 async function handleThemeToggle(): Promise<void> {
