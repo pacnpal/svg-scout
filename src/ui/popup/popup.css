@@ -392,21 +392,37 @@ body {
 .theme-toggle svg {
   width: 18px;
   height: 18px;
+  flex-shrink: 0;
+  stroke: #666;
+}
+
+/* Hide all icons by default using specific classes */
+.theme-toggle .theme-icon-light,
+.theme-toggle .theme-icon-dark {
   display: none;
-  stroke: var(--accent-color);
 }
 
-:root:not([data-theme]) .theme-toggle .theme-icon-system,
-:root[data-theme="system"] .theme-toggle .theme-icon-system {
+/* System icon always visible by default */
+.theme-toggle .theme-icon-system {
   display: block;
 }
 
-:root[data-theme="light"] .theme-toggle .theme-icon-light {
+/* Light theme: show sun, hide others */
+[data-theme="light"] .theme-toggle .theme-icon-light {
   display: block;
 }
+[data-theme="light"] .theme-toggle .theme-icon-system,
+[data-theme="light"] .theme-toggle .theme-icon-dark {
+  display: none;
+}
 
-:root[data-theme="dark"] .theme-toggle .theme-icon-dark {
+/* Dark theme: show moon, hide others */
+[data-theme="dark"] .theme-toggle .theme-icon-dark {
   display: block;
+}
+[data-theme="dark"] .theme-toggle .theme-icon-system,
+[data-theme="dark"] .theme-toggle .theme-icon-light {
+  display: none;
 }
 
 /* Spinner animation */
