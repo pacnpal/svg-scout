@@ -34,21 +34,72 @@ A browser extension for Chrome and Firefox that scouts and extracts SVG icons fr
   - Light/dark/system theme support
   - Synced state between popup and side panel
 
+## Build Instructions for Mozilla Reviewers
+
+### Requirements
+
+- **Operating System**: macOS, Linux, or Windows
+- **Node.js**: v18.0.0 or higher (tested with v22.x)
+- **Package Manager**: npm (included with Node.js) or Bun v1.0+
+
+### Step-by-Step Build
+
+```bash
+# 1. Extract source code and enter directory
+cd svg-scout
+
+# 2. Install dependencies
+npm install
+
+# 3. Build Firefox extension
+npm run build:firefox
+
+# 4. The built extension is in dist/firefox/
+# 5. Package is created at dist/svg-scout-firefox.xpi
+```
+
+### Build Script
+
+Run the complete build and package process:
+```bash
+npm run package:firefox
+```
+
+This executes: TypeScript compilation → Vite build → ZIP packaging → addons-linter validation
+
+### Build Tools Used
+
+| Tool | Version | Purpose |
+|------|---------|---------|
+| TypeScript | ^5.7.2 | Type-safe JavaScript compilation |
+| Vite | ^6.0.7 | Build tool and bundler |
+| @crxjs/vite-plugin | ^2.0.0-beta.28 | Browser extension bundler |
+
+### Third-Party Libraries
+
+| Library | Purpose |
+|---------|---------|
+| jszip | ZIP file generation for bulk downloads |
+| webextension-polyfill | Cross-browser API compatibility |
+
+**Note**: The "Function constructor is eval" warning originates from jszip, a widely-used open-source library (https://github.com/Stuk/jszip).
+
+---
+
 ## Installation
 
 ### From Source
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/svg-scout.git
+   git clone https://github.com/pacnpal/svg-scout.git
    cd svg-scout
    ```
 
 2. Install dependencies:
    ```bash
-   bun install
-   # or
    npm install
+   # or: bun install
    ```
 
 3. Build the extension:
