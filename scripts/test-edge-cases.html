@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVG Scout - Edge Case Tests</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%234f46e5'/%3E%3C/svg%3E">
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f5f5f5;
+        }
+        h1 { color: #1a1a1a; }
+        h2 { color: #4f46e5; margin-top: 2rem; }
+        .test-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .expected {
+            background: #e8f5e9;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #2e7d32;
+        }
+        code {
+            background: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-size: 0.85rem;
+        }
+        .inline-demo svg {
+            width: 48px;
+            height: 48px;
+            margin: 0.5rem;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>SVG Scout Edge Case Tests</h1>
+    <p>This page tests the 4 new edge case detectors. Run SVG Scout and verify all SVGs are found.</p>
+
+    <!-- ============================================ -->
+    <!-- TEST 1: INLINE SVGs (baseline) -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>1. Inline SVGs (Baseline)</h3>
+        <p>Standard inline SVGs - should always be detected.</p>
+        <div class="inline-demo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="#4f46e5">
+                <path d="M12 2L2 22h20L12 2zm0 4l7 14H5l7-14z"/>
+            </svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M9 9l6 6m0-6l-6 6"/>
+            </svg>
+        </div>
+        <p class="expected">Expected: 3 inline SVGs detected</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 2: TEMPLATE SVGs -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>2. Template SVGs</h3>
+        <p>SVGs inside <code>&lt;template&gt;</code> elements (Vue/Lit/Angular pattern).</p>
+
+        <template id="icon-star">
+            <svg viewBox="0 0 24 24" fill="#fbbf24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+        </template>
+
+        <template id="icon-heart">
+            <svg viewBox="0 0 24 24" fill="#ef4444">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+        </template>
+
+        <template id="icon-check">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="3">
+                <path d="M20 6L9 17l-5-5"/>
+            </svg>
+        </template>
+
+        <p class="expected">Expected: 3 template SVGs detected (star, heart, check)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 3: DATA ATTRIBUTE SVGs -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>3. Data Attribute SVGs</h3>
+        <p>SVGs stored in <code>data-*</code> attributes.</p>
+
+        <div
+            id="data-svg-test-1"
+            data-svg='<svg viewBox="0 0 24 24" fill="#3b82f6"><rect x="2" y="2" width="20" height="20" rx="4"/></svg>'
+        >
+            Element with data-svg attribute (blue rounded square)
+        </div>
+
+        <div
+            id="data-svg-test-2"
+            data-icon='<svg viewBox="0 0 24 24" fill="#8b5cf6"><polygon points="12,2 22,22 2,22"/></svg>'
+        >
+            Element with data-icon attribute (purple triangle)
+        </div>
+
+        <div
+            id="data-svg-test-3"
+            data-graphic="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%2310b981'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3C/svg%3E"
+        >
+            Element with data-graphic attribute (data URI - green circle)
+        </div>
+
+        <p class="expected">Expected: 3 data attribute SVGs detected (square, triangle, circle)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 4: NOSCRIPT SVGs -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>4. Noscript SVGs</h3>
+        <p>SVGs inside <code>&lt;noscript&gt;</code> elements (fallback content).</p>
+
+        <noscript>
+            <svg viewBox="0 0 24 24" fill="#f97316">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+        </noscript>
+
+        <noscript>
+            <svg viewBox="0 0 24 24" fill="#06b6d4">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/>
+            </svg>
+        </noscript>
+
+        <p class="expected">Expected: 2 noscript SVGs detected (orange check, cyan checkbox)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 5: JSON SCRIPT SVGs -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>5. JSON Script SVGs</h3>
+        <p>SVGs embedded in <code>&lt;script type="application/json"&gt;</code> blocks.</p>
+
+        <script type="application/json" id="icon-config">
+        {
+            "appName": "SVG Scout Tester",
+            "icons": {
+                "menu": "<svg viewBox='0 0 24 24' fill='#64748b'><path d='M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z'/></svg>",
+                "close": "<svg viewBox='0 0 24 24' fill='#64748b'><path d='M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z'/></svg>"
+            },
+            "version": "1.0.0"
+        }
+        </script>
+
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": "SVG Scout Test",
+            "logo": "<svg viewBox='0 0 24 24' fill='#0ea5e9'><circle cx='12' cy='12' r='10'/><text x='12' y='16' text-anchor='middle' fill='white' font-size='10'>S</text></svg>"
+        }
+        </script>
+
+        <p class="expected">Expected: 3 JSON script SVGs detected (menu, close, logo)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 6: CSS BACKGROUND SVGs -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>6. CSS Background SVGs</h3>
+        <p>SVGs used as CSS background-image.</p>
+
+        <style>
+            .css-bg-test {
+                width: 48px;
+                height: 48px;
+                display: inline-block;
+                margin: 0.5rem;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+            .css-bg-1 {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23a855f7'%3E%3Cpath d='M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z'/%3E%3C/svg%3E");
+            }
+            .css-bg-2 {
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ec4899'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");
+            }
+        </style>
+
+        <div class="css-bg-test css-bg-1" title="Purple star"></div>
+        <div class="css-bg-test css-bg-2" title="Pink checkmark"></div>
+
+        <p class="expected">Expected: 2 CSS background SVGs detected (star, checkmark)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- TEST 7: SVG SPRITE with <use> -->
+    <!-- ============================================ -->
+    <div class="test-section">
+        <h3>7. SVG Sprite with &lt;use&gt;</h3>
+        <p>SVGs referenced via sprite symbols.</p>
+
+        <svg class="hidden" aria-hidden="true">
+            <symbol id="sprite-arrow" viewBox="0 0 24 24">
+                <path fill="#14b8a6" d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+            </symbol>
+            <symbol id="sprite-home" viewBox="0 0 24 24">
+                <path fill="#f59e0b" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+            </symbol>
+        </svg>
+
+        <svg width="48" height="48"><use href="#sprite-arrow"/></svg>
+        <svg width="48" height="48"><use href="#sprite-home"/></svg>
+
+        <p class="expected">Expected: 2 sprite symbols detected (arrow, home)</p>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- SUMMARY -->
+    <!-- ============================================ -->
+    <div class="test-section" style="background: #eef2ff;">
+        <h3>Total Expected SVGs</h3>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr><td>Inline SVGs</td><td style="text-align: right;"><strong>3</strong></td></tr>
+            <tr><td>Template SVGs</td><td style="text-align: right;"><strong>3</strong></td></tr>
+            <tr><td>Data Attribute SVGs</td><td style="text-align: right;"><strong>3</strong></td></tr>
+            <tr><td>Noscript SVGs</td><td style="text-align: right;"><strong>2</strong></td></tr>
+            <tr><td>JSON Script SVGs</td><td style="text-align: right;"><strong>3</strong></td></tr>
+            <tr><td>CSS Background SVGs</td><td style="text-align: right;"><strong>2</strong></td></tr>
+            <tr><td>Sprite SVGs</td><td style="text-align: right;"><strong>2</strong></td></tr>
+            <tr><td>Favicon SVG</td><td style="text-align: right;"><strong>1</strong></td></tr>
+            <tr style="border-top: 2px solid #4f46e5;"><td><strong>Total (after dedup)</strong></td><td style="text-align: right;"><strong>~19</strong></td></tr>
+        </table>
+    </div>
+
+</body>
+</html>

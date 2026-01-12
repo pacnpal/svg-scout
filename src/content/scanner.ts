@@ -7,6 +7,10 @@ import { detectCssSvgs } from './detectors/css';
 import { detectSpriteSvgs } from './detectors/sprite';
 import { detectShadowDomSvgs } from './detectors/shadow-dom';
 import { detectFaviconSvgs } from './detectors/favicon';
+import { detectTemplateSvgs } from './detectors/template';
+import { detectDataAttributeSvgs } from './detectors/data-attribute';
+import { detectNoscriptSvgs } from './detectors/noscript';
+import { detectJsonScriptSvgs } from './detectors/json-script';
 
 type ProgressCallback = (progress: ScanProgress) => void;
 
@@ -23,6 +27,10 @@ const detectors: Detector[] = [
   { name: 'Sprite SVGs', detect: detectSpriteSvgs },
   { name: 'Shadow DOM SVGs', detect: detectShadowDomSvgs },
   { name: 'Favicon SVGs', detect: detectFaviconSvgs },
+  { name: 'Template SVGs', detect: detectTemplateSvgs },
+  { name: 'Data Attribute SVGs', detect: detectDataAttributeSvgs },
+  { name: 'Noscript SVGs', detect: detectNoscriptSvgs },
+  { name: 'JSON Script SVGs', detect: detectJsonScriptSvgs },
 ];
 
 export async function scanPage(onProgress?: ProgressCallback): Promise<SVGItem[]> {

@@ -6,7 +6,11 @@ export type SVGSource =
   | 'favicon'
   | 'shadow-dom'
   | 'object-embed'
-  | 'network';
+  | 'network'
+  | 'template'
+  | 'data-attribute'
+  | 'noscript'
+  | 'json-script';
 
 export interface SVGItem {
   id: string;
