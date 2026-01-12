@@ -17,7 +17,7 @@
     "package:chrome": "bun run build:chrome && cd dist/chrome && zip -r ../svg-scout-chrome.zip . -x '.DS_Store' -x '*/.DS_Store'",
     "package:firefox": "bun run build:firefox && cd dist/firefox && zip -r ../svg-scout-firefox.xpi . -x '.DS_Store' -x '*/.DS_Store' && bun run lint:firefox",
     "release": "bun run package",
-    "source:firefox": "echo '=== SVG Scout Source Code for Firefox Review ===' && echo '' && for f in manifest.json package.json tsconfig.json vite.config.ts $(find src -type f -name '*.ts' -o -name '*.html' -o -name '*.css' | sort) $(find scripts -type f -name '*.js' | sort); do echo '' && echo \"========== $f ==========\" && cat \"$f\"; done"
+    "source:firefox": "zip -r dist/svg-scout-source.zip manifest.json package.json tsconfig.json vite.config.ts src/ scripts/ public/ README.md -x '*.DS_Store' && echo 'Created dist/svg-scout-source.zip'"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.28",
