@@ -5,18 +5,30 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "dev:firefox": "vite --mode firefox",
+    "build": "bun run build:chrome && bun run build:firefox",
+    "build:chrome": "tsc && vite build",
+    "build:firefox": "tsc && vite build --mode firefox",
     "preview": "vite preview",
-    "generate-icons": "node scripts/generate-icons.js"
+    "generate-icons": "node scripts/generate-icons.js",
+    "lint": "tsc --noEmit",
+    "lint:firefox": "addons-linter dist/svg-scout-firefox.xpi",
+    "package": "bun run package:chrome && bun run package:firefox",
+    "package:chrome": "bun run build:chrome && cd dist/chrome && zip -r ../svg-scout-chrome.zip . -x '.DS_Store' -x '*/.DS_Store'",
+    "package:firefox": "bun run build:firefox && cd dist/firefox && zip -r ../svg-scout-firefox.xpi . -x '.DS_Store' -x '*/.DS_Store' && bun run lint:firefox",
+    "release": "bun run package"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.28",
     "@types/chrome": "^0.0.287",
+    "@types/webextension-polyfill": "^0.12.4",
+    "addons-linter": "^9.3.0",
     "sharp": "^0.33.2",
     "typescript": "^5.7.2",
     "vite": "^6.0.7"
   },
   "dependencies": {
-    "jszip": "^3.10.1"
+    "jszip": "^3.10.1",
+    "webextension-polyfill": "^0.12.0"
   }
 }

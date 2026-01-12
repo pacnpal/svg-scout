@@ -1,6 +1,6 @@
 # SVG Scout
 
-A Chrome extension that scouts and extracts SVG icons from any webpage. Find inline SVGs, background images, sprites, shadow DOM elements, and more—all in one click.
+A browser extension for Chrome and Firefox that scouts and extracts SVG icons from any webpage. Find inline SVGs, background images, sprites, shadow DOM elements, and more—all in one click.
 
 ## Features
 
@@ -62,18 +62,25 @@ A Chrome extension that scouts and extracts SVG icons from any webpage. Find inl
    - Navigate to `chrome://extensions`
    - Enable "Developer mode" (toggle in top right)
    - Click "Load unpacked"
-   - Select the `dist` folder
+   - Select the `dist/chrome` folder
+
+5. Load in Firefox:
+   - Navigate to `about:debugging#/runtime/this-firefox`
+   - Click "Load Temporary Add-on..."
+   - Select any file in the `dist/firefox` folder
 
 ### Development Mode
 
 Run the development server with hot reload:
 ```bash
+# Chrome
 bun run dev
-# or
-npm run dev
+
+# Firefox
+bun run dev:firefox
 ```
 
-Then load the `dist` folder as an unpacked extension. Changes will auto-reload.
+Then load the appropriate `dist/chrome` or `dist/firefox` folder as an unpacked extension. Changes will auto-reload.
 
 ## Usage
 
@@ -169,24 +176,60 @@ svg-scout/
 
 - Chrome 116+ (required for side panel API)
 - Edge 116+ (Chromium-based)
+- Firefox 142+ (required for data collection permissions)
 
 ## Building
 
 ### Production Build
 
 ```bash
+# Build both Chrome and Firefox
 bun run build
+
+# Build Chrome only
+bun run build:chrome
+
+# Build Firefox only
+bun run build:firefox
 ```
 
-Output is in the `dist` folder, ready for Chrome Web Store submission.
+Output is in `dist/chrome` and `dist/firefox` folders.
+
+### Package for Distribution
+
+```bash
+# Package both browsers
+bun run package
+
+# Package Chrome only (creates dist/svg-scout-chrome.zip)
+bun run package:chrome
+
+# Package Firefox only (creates dist/svg-scout-firefox.xpi)
+# Includes automatic addons-linter validation
+bun run package:firefox
+```
 
 ### Development Build
 
 ```bash
+# Chrome with hot reload
 bun run dev
+
+# Firefox with hot reload
+bun run dev:firefox
 ```
 
 Starts Vite dev server with CRXJS hot reload support.
+
+### Linting
+
+```bash
+# TypeScript type checking
+bun run lint
+
+# Firefox add-on validation (requires built xpi)
+bun run lint:firefox
+```
 
 ### Generate Icons
 

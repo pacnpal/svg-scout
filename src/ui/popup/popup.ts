@@ -1,3 +1,4 @@
+import { browser, isFirefox, openSidePanel } from '../../shared/browser-api';
 import type { SVGItem, PngScale, ThemeMode } from '../../shared/types';
 import type { Message, ScanProgressMessage, ScanResultMessage } from '../../shared/messages';
 import { getSettings, saveSettings } from '../../shared/storage';
@@ -39,7 +40,6 @@ function getSelectedFormat(): FormatOption {
 }
 
 async function init(): Promise<void> {
-  // Load and apply theme
   const settings = await getSettings();
   currentTheme = settings.theme;
   applyTheme(currentTheme);
@@ -51,9 +51,9 @@ async function init(): Promise<void> {
   selectAllCheckbox.addEventListener('change', handleSelectAll);
   themeToggle.addEventListener('click', handleThemeToggle);
 
-  chrome.runtime.onMessage.addListener(handleMessage);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  browser.runtime.onMessage.addListener((message: any) => handleMessage(message as Message));
 
-  // Auto-scan when popup opens
   await handleScan();
 }
 
@@ -75,22 +75,20 @@ async function handleScan(): Promise<void> {
   setStatus('scanning', 'Scanning page...');
 
   try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
     if (!tab.id) throw new Error('No active tab');
 
-    // Check if this is a restricted page
+    // Check if this is a restricted page (Chrome, Firefox, Edge)
     if (tab.url?.startsWith('chrome://') || tab.url?.startsWith('chrome-extension://') ||
-        tab.url?.startsWith('about:') || tab.url?.startsWith('edge://')) {
+        tab.url?.startsWith('about:') || tab.url?.startsWith('edge://') ||
+        tab.url?.startsWith('moz-extension://')) {
       throw new Error('Cannot scan browser pages');
     }
 
-    // Try to send message, inject content script if needed
     let response = await trySendMessage(tab.id, { type: 'SCAN_PAGE' });
 
     if (!response) {
-      // Content script not ready, inject it programmatically
       await injectContentScript(tab.id);
-      // Wait a bit for it to initialize
       await new Promise(resolve => setTimeout(resolve, 100));
       response = await sendMessageWithRetry(tab.id, { type: 'SCAN_PAGE' }, 3);
     }
@@ -120,7 +118,7 @@ async function handleScan(): Promise<void> {
 
 async function trySendMessage(tabId: number, message: { type: string }): Promise<{ success: boolean; data?: SVGItem[]; error?: string; pageTitle?: string } | null> {
   try {
-    return await chrome.tabs.sendMessage(tabId, message);
+    return await browser.tabs.sendMessage(tabId, message) as { success: boolean; data?: SVGItem[]; error?: string; pageTitle?: string };
   } catch {
     return null;
   }
@@ -129,7 +127,7 @@ async function trySendMessage(tabId: number, message: { type: string }): Promise
 async function injectContentScript(tabId: number): Promise<void> {
   try {
     // Check if already injected
-    const results = await chrome.scripting.executeScript({
+    const results = await browser.scripting.executeScript({
       target: { tabId },
       func: () => {
         return !!(window as unknown as { __svgScoutInjected?: boolean }).__svgScoutInjected;
@@ -137,19 +135,19 @@ async function injectContentScript(tabId: number): Promise<void> {
     });
 
     if (results?.[0]?.result) {
-      return; // Already injected
+      return;
     }
 
     // Mark as injected
-    await chrome.scripting.executeScript({
+    await browser.scripting.executeScript({
       target: { tabId },
       func: () => {
         (window as unknown as { __svgScoutInjected?: boolean }).__svgScoutInjected = true;
       },
     });
 
-    // Inject the content script (stable filename without hash)
-    await chrome.scripting.executeScript({
+    // Inject the content script
+    await browser.scripting.executeScript({
       target: { tabId },
       files: ['assets/index.ts.js'],
     });
@@ -168,7 +166,7 @@ async function sendMessageWithRetry(
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const response = await chrome.tabs.sendMessage(tabId, message);
+      const response = await browser.tabs.sendMessage(tabId, message) as { success: boolean; data?: SVGItem[]; error?: string; pageTitle?: string };
       return response;
     } catch (error) {
       lastError = error as Error;
@@ -176,7 +174,6 @@ async function sendMessageWithRetry(
                                 String(error).includes('Receiving end does not exist');
 
       if (isConnectionError && attempt < maxRetries - 1) {
-        // Wait before retrying (200ms, 400ms, 800ms, 1600ms)
         await new Promise(resolve => setTimeout(resolve, 200 * Math.pow(2, attempt)));
       } else {
         throw error;
@@ -226,37 +223,46 @@ function displayResults(items: SVGItem[]): void {
 }
 
 function renderGrid(): void {
-  resultsGrid.innerHTML = '';
+  resultsGrid.replaceChildren();
 
   for (const item of currentItems) {
     const div = document.createElement('div');
     div.className = `svg-item ${selectedIds.has(item.id) ? 'selected' : ''}`;
     div.dataset.id = item.id;
 
-    div.innerHTML = `
-      <div class="check-overlay">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <polyline points="20 6 9 17 4 12"/>
-        </svg>
-      </div>
-      <div class="svg-preview">${sanitizeSvg(item.content)}</div>
-    `;
+    // Create check overlay with checkmark SVG
+    const checkOverlay = document.createElement('div');
+    checkOverlay.className = 'check-overlay';
+    const checkSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    checkSvg.setAttribute('viewBox', '0 0 24 24');
+    checkSvg.setAttribute('fill', 'none');
+    checkSvg.setAttribute('stroke', 'currentColor');
+    const polyline = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+    polyline.setAttribute('points', '20 6 9 17 4 12');
+    checkSvg.appendChild(polyline);
+    checkOverlay.appendChild(checkSvg);
 
+    // Create preview container with sanitized SVG
+    const preview = document.createElement('div');
+    preview.className = 'svg-preview';
+    preview.appendChild(sanitizeSvgElement(item.content));
+
+    div.appendChild(checkOverlay);
+    div.appendChild(preview);
     div.addEventListener('click', () => toggleSelection(item.id));
     resultsGrid.appendChild(div);
   }
 }
 
-function sanitizeSvg(content: string): string {
+function sanitizeSvgElement(content: string): Element {
   const parser = new DOMParser();
   const doc = parser.parseFromString(content, 'image/svg+xml');
   const svg = doc.documentElement;
 
-  // Remove potentially dangerous attributes
+  // Remove potentially dangerous event handlers
   svg.removeAttribute('onload');
   svg.removeAttribute('onerror');
 
-  // Ensure viewBox exists before removing width/height
   if (!svg.hasAttribute('viewBox')) {
     const width = svg.getAttribute('width');
     const height = svg.getAttribute('height');
@@ -265,7 +271,6 @@ function sanitizeSvg(content: string): string {
       const h = parseFloat(height) || 24;
       svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
     } else {
-      // Default viewBox if no dimensions
       svg.setAttribute('viewBox', '0 0 24 24');
     }
   }
@@ -275,7 +280,7 @@ function sanitizeSvg(content: string): string {
   svg.style.width = '100%';
   svg.style.height = '100%';
 
-  return svg.outerHTML;
+  return svg;
 }
 
 function toggleSelection(id: string): void {
@@ -325,12 +330,19 @@ function setStatus(type: 'ready' | 'scanning' | 'complete' | 'error', text: stri
 }
 
 async function handleOpenSidePanel(): Promise<void> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (tab?.windowId) {
-    await chrome.runtime.sendMessage({
-      type: 'OPEN_SIDE_PANEL',
-      windowId: tab.windowId
-    });
+  if (isFirefox) {
+    // Firefox requires sidebarAction.open() to be called from a user action context
+    // Calling it directly from the popup button click preserves that context
+    await openSidePanel();
+  } else {
+    // Chrome can open side panel from the service worker
+    const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+    if (tab?.windowId) {
+      await browser.runtime.sendMessage({
+        type: 'OPEN_SIDE_PANEL',
+        windowId: tab.windowId
+      });
+    }
   }
   window.close();
 }
@@ -368,15 +380,14 @@ async function downloadItems(items: SVGItem[]): Promise<void> {
   const format = getSelectedFormat();
 
   if (items.length === 1) {
-    // Single item download
     if (format.type === 'svg') {
-      await chrome.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'DOWNLOAD_SVG',
         item: items[0],
         pageTitle: currentPageTitle,
       });
     } else {
-      await chrome.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'DOWNLOAD_PNG',
         item: items[0],
         scale: format.scale,
@@ -384,15 +395,14 @@ async function downloadItems(items: SVGItem[]): Promise<void> {
       });
     }
   } else {
-    // Multiple items - download as ZIP
     if (format.type === 'svg') {
-      await chrome.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'DOWNLOAD_ZIP',
         items,
         pageTitle: currentPageTitle,
       });
     } else {
-      await chrome.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: 'DOWNLOAD_ZIP',
         items,
         includePng: true,

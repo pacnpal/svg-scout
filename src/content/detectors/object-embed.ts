@@ -1,3 +1,4 @@
+import { browser } from '../../shared/browser-api';
 import type { SVGItem } from '../../shared/types';
 import { createSvgItem, isSvgUrl } from '../../shared/svg-utils';
 import { SVG_MIME_TYPES } from '../../shared/constants';
@@ -60,10 +61,10 @@ async function fetchSvg(url: string): Promise<string | null> {
     }
   } catch {
     try {
-      const response = await chrome.runtime.sendMessage({
+      const response = await browser.runtime.sendMessage({
         type: 'FETCH_EXTERNAL_SVG',
         url,
-      });
+      }) as { success: boolean; data?: string };
       if (response.success && response.data) {
         return response.data;
       }

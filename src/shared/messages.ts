@@ -1,3 +1,4 @@
+import { browser } from './browser-api';
 import type { SVGItem, ScanProgress, PngScale } from './types';
 
 export type MessageType =
@@ -90,9 +91,9 @@ export interface MessageResponse<T = unknown> {
 }
 
 export function sendMessage<T = unknown>(message: Message): Promise<MessageResponse<T>> {
-  return chrome.runtime.sendMessage(message);
+  return browser.runtime.sendMessage(message) as Promise<MessageResponse<T>>;
 }
 
 export function sendTabMessage<T = unknown>(tabId: number, message: Message): Promise<MessageResponse<T>> {
-  return chrome.tabs.sendMessage(tabId, message);
+  return browser.tabs.sendMessage(tabId, message) as Promise<MessageResponse<T>>;
 }

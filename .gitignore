@@ -65,9 +65,10 @@ coverage/
 .nyc_output/
 *.lcov
 
-# Chrome Extension Development
+# Browser Extension Development
 *.pem
 *.crx
+*.xpi
 *.zip
 key.pem
 

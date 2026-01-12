@@ -9,17 +9,27 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "svg-scout@example.com",
+      "strict_min_version": "142.0",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    }
+  },
   "permissions": [
     "activeTab",
     "scripting",
-    "sidePanel",
     "storage",
     "downloads",
-    "offscreen",
-    "contextMenus",
-    "windows"
+    "contextMenus"
+  ],
+  "optional_permissions": [
+    "sidePanel"
   ],
   "background": {
+    "scripts": ["src/background/service-worker.ts"],
     "service_worker": "src/background/service-worker.ts",
     "type": "module"
   },
@@ -34,6 +44,15 @@
   },
   "side_panel": {
     "default_path": "src/ui/sidepanel/sidepanel.html"
+  },
+  "sidebar_action": {
+    "default_panel": "src/ui/sidepanel/sidepanel.html",
+    "default_title": "SVG Scout",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "32": "icons/icon-32.png"
+    },
+    "open_at_install": false
   },
   "content_scripts": [
     {

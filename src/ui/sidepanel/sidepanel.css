@@ -63,18 +63,25 @@
   --btn-secondary-hover: #505050;
 }
 
+html {
+  min-width: 420px;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
   font-size: 14px;
   line-height: 1.5;
   color: var(--text-primary);
   background: var(--bg-primary);
+  min-width: 420px;
 }
 
 .sidepanel {
   height: 100vh;
   display: flex;
   flex-direction: column;
+  min-width: 420px;
+  width: 100%;
 }
 
 /* Header */

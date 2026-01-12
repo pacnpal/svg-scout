@@ -1,32 +1,34 @@
+import { browser, setSidePanelBehavior, openSidePanel } from '../shared/browser-api';
 import type { Message, MessageResponse } from '../shared/messages';
 import type { SVGItem, PngScale } from '../shared/types';
-import { OFFSCREEN_DOCUMENT_PATH, CONTEXT_MENU_IDS } from '../shared/constants';
+import { CONTEXT_MENU_IDS } from '../shared/constants';
 import { saveLastScanResults } from '../shared/storage';
 import { generateFileName } from '../shared/svg-utils';
+import { createBlobUrl, convertToPng, createZip } from './blob-handler';
 
-let creatingOffscreenDocument: Promise<void> | null = null;
-
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.contextMenus.create({
+browser.runtime.onInstalled.addListener(() => {
+  browser.contextMenus.create({
     id: CONTEXT_MENU_IDS.DOWNLOAD_SVG,
     title: 'Download SVG',
     contexts: ['image'],
     targetUrlPatterns: ['*://*/*.svg', '*://*/*.svg?*'],
   });
 
-  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+  // Set side panel behavior (Chrome-only, no-op on Firefox)
+  setSidePanelBehavior();
 });
 
-chrome.runtime.onMessage.addListener(
-  (message: Message, sender, sendResponse: (response: MessageResponse) => void) => {
-    handleMessage(message, sender).then(sendResponse);
-    return true;
+browser.runtime.onMessage.addListener(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (message: any, sender: any) => {
+    // Return a promise for async handling
+    return handleMessage(message as Message, sender);
   }
 );
 
 async function handleMessage(
   message: Message,
-  sender: chrome.runtime.MessageSender
+  sender: browser.Runtime.MessageSender | chrome.runtime.MessageSender
 ): Promise<MessageResponse> {
   switch (message.type) {
     case 'SCAN_RESULT':
@@ -46,7 +48,7 @@ async function handleMessage(
       return fetchExternalSvg(message.url);
 
     case 'OPEN_SIDE_PANEL':
-      return openSidePanel(message.windowId ?? sender.tab?.windowId);
+      return handleOpenSidePanel(message.windowId ?? sender.tab?.windowId);
 
     case 'COPY_SVG':
       return { success: true };
@@ -58,23 +60,11 @@ async function handleMessage(
 
 async function downloadSvg(item: SVGItem, pageTitle?: string): Promise<MessageResponse> {
   try {
-    await ensureOffscreenDocument();
-
-    const response = await chrome.runtime.sendMessage({
-      target: 'offscreen',
-      type: 'CREATE_BLOB_URL',
-      content: item.content,
-      mimeType: 'image/svg+xml',
-    });
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to create blob URL');
-    }
-
+    const blobUrl = await createBlobUrl(item.content, 'image/svg+xml');
     const fileName = generateFileName(item, 0, pageTitle);
 
-    await chrome.downloads.download({
-      url: response.data as string,
+    await browser.downloads.download({
+      url: blobUrl,
       filename: fileName,
     });
 
@@ -91,25 +81,12 @@ async function downloadPng(
   pageTitle?: string
 ): Promise<MessageResponse> {
   try {
-    await ensureOffscreenDocument();
-
-    const response = await chrome.runtime.sendMessage({
-      target: 'offscreen',
-      type: 'CONVERT_TO_PNG',
-      content: item.content,
-      scale,
-      backgroundColor,
-    });
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to convert to PNG');
-    }
-
+    const blobUrl = await convertToPng(item.content, scale, backgroundColor);
     const baseName = generateFileName(item, 0, pageTitle).replace('.svg', '');
     const fileName = `${baseName}-${scale}x.png`;
 
-    await chrome.downloads.download({
-      url: response.data as string,
+    await browser.downloads.download({
+      url: blobUrl,
       filename: fileName,
     });
 
@@ -126,24 +103,11 @@ async function downloadZip(
   pageTitle?: string
 ): Promise<MessageResponse> {
   try {
-    await ensureOffscreenDocument();
-
-    const response = await chrome.runtime.sendMessage({
-      target: 'offscreen',
-      type: 'CREATE_ZIP',
-      items,
-      includePng,
-      pngScale,
-    });
-
-    if (!response.success || !response.data) {
-      throw new Error(response.error || 'Failed to create ZIP');
-    }
-
+    const blobUrl = await createZip(items, includePng, pngScale);
     const zipName = pageTitle ? `${sanitizeFileName(pageTitle)}-svgs.zip` : 'svg-export.zip';
 
-    await chrome.downloads.download({
-      url: response.data as string,
+    await browser.downloads.download({
+      url: blobUrl,
       filename: zipName,
     });
 
@@ -155,11 +119,11 @@ async function downloadZip(
 
 function sanitizeFileName(name: string): string {
   return name
-    .replace(/[<>:"/\\|?*]/g, '')  // Remove invalid characters
-    .replace(/\s+/g, '-')           // Replace spaces with hyphens
-    .replace(/-+/g, '-')            // Collapse multiple hyphens
-    .replace(/^-|-$/g, '')          // Remove leading/trailing hyphens
-    .substring(0, 50)               // Limit length
+    .replace(/[<>:"/\\|?*]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .substring(0, 50)
     .toLowerCase();
 }
 
@@ -176,52 +140,16 @@ async function fetchExternalSvg(url: string): Promise<MessageResponse<string>> {
   }
 }
 
-async function openSidePanel(
-  windowId?: number
-): Promise<MessageResponse> {
+async function handleOpenSidePanel(windowId?: number): Promise<MessageResponse> {
   try {
-    // If no windowId provided (e.g., from popup), get the current window
-    let targetWindowId = windowId;
-    if (!targetWindowId) {
-      const currentWindow = await chrome.windows.getCurrent();
-      targetWindowId = currentWindow.id;
-    }
-
-    if (targetWindowId) {
-      await chrome.sidePanel.open({ windowId: targetWindowId });
-    }
+    await openSidePanel(windowId);
     return { success: true };
   } catch (error) {
     return { success: false, error: String(error) };
   }
 }
 
-async function ensureOffscreenDocument(): Promise<void> {
-  const existingContexts = await chrome.runtime.getContexts({
-    contextTypes: [chrome.runtime.ContextType.OFFSCREEN_DOCUMENT],
-    documentUrls: [chrome.runtime.getURL(OFFSCREEN_DOCUMENT_PATH)],
-  });
-
-  if (existingContexts.length > 0) {
-    return;
-  }
-
-  if (creatingOffscreenDocument) {
-    await creatingOffscreenDocument;
-    return;
-  }
-
-  creatingOffscreenDocument = chrome.offscreen.createDocument({
-    url: OFFSCREEN_DOCUMENT_PATH,
-    reasons: [chrome.offscreen.Reason.BLOBS],
-    justification: 'Create blob URLs for downloads and ZIP files',
-  });
-
-  await creatingOffscreenDocument;
-  creatingOffscreenDocument = null;
-}
-
-chrome.contextMenus.onClicked.addListener(async (info, _tab) => {
+browser.contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === CONTEXT_MENU_IDS.DOWNLOAD_SVG && info.srcUrl) {
     try {
       const response = await fetchExternalSvg(info.srcUrl);

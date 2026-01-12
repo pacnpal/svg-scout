@@ -1,3 +1,4 @@
+import { browser } from '../shared/browser-api';
 import type { Message, MessageResponse } from '../shared/messages';
 import type { SVGItem } from '../shared/types';
 import { scanPage } from './scanner';
@@ -5,10 +6,11 @@ import { scanPage } from './scanner';
 // Mark as injected so programmatic injection knows we're already here
 (window as unknown as { __svgScoutInjected?: boolean }).__svgScoutInjected = true;
 
-chrome.runtime.onMessage.addListener(
-  (message: Message, _sender, sendResponse: (response: MessageResponse) => void) => {
-    handleMessage(message).then(sendResponse);
-    return true;
+browser.runtime.onMessage.addListener(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (message: any) => {
+    // Return a promise for async handling
+    return handleMessage(message as Message);
   }
 );
 
@@ -25,7 +27,7 @@ async function handleMessage(message: Message): Promise<MessageResponse> {
 async function performScan(): Promise<MessageResponse<SVGItem[]>> {
   try {
     const items = await scanPage((progress) => {
-      chrome.runtime.sendMessage({
+      browser.runtime.sendMessage({
         type: 'SCAN_PROGRESS',
         progress,
       });
@@ -33,7 +35,7 @@ async function performScan(): Promise<MessageResponse<SVGItem[]>> {
 
     const pageTitle = document.title || undefined;
 
-    chrome.runtime.sendMessage({
+    browser.runtime.sendMessage({
       type: 'SCAN_RESULT',
       items,
       pageTitle,

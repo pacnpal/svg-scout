@@ -1,3 +1,4 @@
+import { browser } from '../../shared/browser-api';
 import type { SVGItem } from '../../shared/types';
 import { createSvgItem, isSvgUrl, isSvgDataUri, dataUriToSvg } from '../../shared/svg-utils';
 
@@ -89,10 +90,10 @@ async function fetchSvg(url: string): Promise<string | null> {
     // Try via background script for CORS
     try {
       const absoluteUrl = new URL(url, window.location.href).href;
-      const response = await chrome.runtime.sendMessage({
+      const response = await browser.runtime.sendMessage({
         type: 'FETCH_EXTERNAL_SVG',
         url: absoluteUrl,
-      });
+      }) as { success: boolean; data?: string };
       if (response.success && response.data) {
         return response.data;
       }
