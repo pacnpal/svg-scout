@@ -23,10 +23,9 @@
     "scripting",
     "storage",
     "downloads",
-    "contextMenus"
-  ],
-  "optional_permissions": [
-    "sidePanel"
+    "contextMenus",
+    "sidePanel",
+    "offscreen"
   ],
   "background": {
     "scripts": ["src/background/service-worker.ts"],

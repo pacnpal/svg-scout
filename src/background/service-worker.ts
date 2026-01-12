@@ -21,6 +21,8 @@ browser.runtime.onInstalled.addListener(() => {
 browser.runtime.onMessage.addListener(
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (message: any, sender: any) => {
+    // Ignore messages targeted at the offscreen document
+    if (message.target === 'offscreen') return;
     // Return a promise for async handling
     return handleMessage(message as Message, sender);
   }
