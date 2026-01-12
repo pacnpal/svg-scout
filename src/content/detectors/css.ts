@@ -40,10 +40,13 @@ async function extractSvgsFromCssValue(
   if (!value || value === 'none') return;
 
   // Extract all url() references
-  const urlMatches = value.matchAll(/url\(["']?([^"')]+)["']?\)/g);
+  // Handle double-quoted, single-quoted, and unquoted URLs separately
+  const urlMatches = value.matchAll(/url\((?:"([^"]+)"|'([^']+)'|([^)]+))\)/g);
 
   for (const match of urlMatches) {
-    const url = match[1];
+    // URL is in group 1 (double-quoted), group 2 (single-quoted), or group 3 (unquoted)
+    const url = match[1] || match[2] || match[3];
+    if (!url) continue;
 
     if (seenUrls.has(url)) continue;
     seenUrls.add(url);
