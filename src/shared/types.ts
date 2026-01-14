@@ -29,7 +29,7 @@ export interface SVGItem {
 export type ThemeMode = 'system' | 'light' | 'dark';
 
 export interface Settings {
-  defaultPngScale: 1 | 2 | 4;
+  defaultPngScale: 1 | 2 | 4 | 8 | 16 | 32;
   pngBackgroundColor: string;
   autoScan: boolean;
   viewMode: 'grid' | 'list';
@@ -48,4 +48,4 @@ export interface ScanProgress {
   total?: number;
 }
 
-export type PngScale = 1 | 2 | 4;
+export type PngScale = 1 | 2 | 4 | 8 | 16 | 32;

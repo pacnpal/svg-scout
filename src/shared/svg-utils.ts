@@ -37,11 +37,35 @@ export function isValidSvg(content: string): boolean {
   }
 }
 
+function extractTransformScale(style: string): { scaleX: number; scaleY: number } {
+  // Check for matrix transform: matrix(a, b, c, d, e, f) where a=scaleX, d=scaleY
+  const matrixMatch = style.match(/transform:\s*matrix\(\s*([^,]+),\s*[^,]+,\s*[^,]+,\s*([^,]+)/);
+  if (matrixMatch) {
+    const scaleX = parseFloat(matrixMatch[1]) || 1;
+    const scaleY = parseFloat(matrixMatch[2]) || 1;
+    return { scaleX, scaleY };
+  }
+
+  // Check for scale transform: scale(x) or scale(x, y)
+  const scaleMatch = style.match(/transform:\s*scale\(\s*([^,)]+)(?:,\s*([^)]+))?\)/);
+  if (scaleMatch) {
+    const scaleX = parseFloat(scaleMatch[1]) || 1;
+    const scaleY = scaleMatch[2] ? parseFloat(scaleMatch[2]) : scaleX;
+    return { scaleX, scaleY };
+  }
+
+  return { scaleX: 1, scaleY: 1 };
+}
+
 export function getSvgDimensions(content: string): { width: number; height: number } {
   try {
     const parser = new DOMParser();
     const doc = parser.parseFromString(content, 'image/svg+xml');
     const svg = doc.documentElement;
+
+    // Extract transform scale from inline style
+    const style = svg.getAttribute('style') || '';
+    const { scaleX, scaleY } = extractTransformScale(style);
 
     let width = parseFloat(svg.getAttribute('width') || '0');
     let height = parseFloat(svg.getAttribute('height') || '0');
@@ -54,7 +78,11 @@ export function getSvgDimensions(content: string): { width: number; height: numb
       }
     }
 
-    return { width: width || 100, height: height || 100 };
+    // Apply transform scale to dimensions
+    width = (width || 100) * scaleX;
+    height = (height || 100) * scaleY;
+
+    return { width, height };
   } catch {
     return { width: 100, height: 100 };
   }

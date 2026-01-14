@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "SVG Scout",
-  "version": "0.0.0.2",
+  "version": "0.0.0.3",
   "description": "Scout and extract SVG icons from any webpage",
   "icons": {
     "16": "icons/icon-16.png",
